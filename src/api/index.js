@@ -34,20 +34,14 @@ export function addCart(options) {
 export function getCartList() {
     return http.get("/shop-cart")
 }
-//增加商品个数
+//改变商品个数
 export function addGoods(cartItemId, goodsCount) {
     return http.put("/shop-cart", {
         cartItemId,
         goodsCount
     })
 }
-//减少商品个数
-export function deleteGoods(cartItemId, goodsCount) {
-    return http.put("/shop-cart", {
-        cartItemId,
-        goodsCount
-    })
-}
+
 //删除购物车列表
 export function deleteCartList(val) {
     return http.delete('/shop-cart/' + val)
