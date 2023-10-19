@@ -35,7 +35,7 @@ export function getCartList() {
     return http.get("/shop-cart")
 }
 //改变商品个数
-export function addGoods(cartItemId, goodsCount) {
+export function changeGoods(cartItemId, goodsCount) {
     return http.put("/shop-cart", {
         cartItemId,
         goodsCount
