@@ -1,25 +1,15 @@
 <template>
   <div>
     <!-- nav-bar -->
-    <van-nav-bar
-      title="购物车"
-      left-arrow
-      @click-left='$router.back()'
-    >
+    <van-nav-bar title="购物车" left-arrow @click-left="$router.back()">
       <template #right>
         <van-icon name="ellipsis" />
       </template>
     </van-nav-bar>
     <div class="container">
       <!-- 加入购物车的商品 -->
-      <van-swipe-cell
-        v-for='item in list'
-        :key='item.goodsId'
-      >
-        <van-checkbox
-          class="van-check"
-          v-model='item.checked'
-        ></van-checkbox>
+      <van-swipe-cell v-for="item in list" :key="item.goodsId">
+        <van-checkbox class="van-check" v-model="item.checked"></van-checkbox>
         <van-card
           :price="item.sellingPrice"
           desc="描述信息"
@@ -27,16 +17,17 @@
           class="goods-card"
           :thumb="item.goodsCoverImg"
         />
-        <van-stepper
+        <!-- <van-stepper
           v-model='item.goodsCount'
           @plus="add(item.cartItemId, item.goodsCount + 1)"
           @minus="del(item.cartItemId, item.goodsCount - 1)"
-        />
-        <!-- <van-stepper
-          :value='item.goodsCount'
-          async-change
-          @change="onChange(value,item.cartItemId)"
         /> -->
+
+        <van-stepper
+          :value="item.goodsCount"
+          async-change
+          @change="onChange($event, item.cartItemId)"
+        />
 
         <template #right>
           <van-button
@@ -48,16 +39,19 @@
         </template>
       </van-swipe-cell>
     </div>
-    <div
-      class="empty"
-      v-show="!list.length"
-      @click="goHome()"
-    >
+    <div class="empty" v-show="!list.length" @click="goHome()">
       <i class="van-icon van-icon-smile-o"></i>
-      <div class="title">购物车空空空如也</div><button
+      <div class="title">购物车空空空如也</div>
+      <button
         class="van-button van-button--primary van-button--normal van-button--block"
-        style="color: rgb(255, 255, 255); background: rgb(27, 174, 174); border-color: rgb(27, 174, 174);"
-      ><span class="van-button__text">前往首页</span></button>
+        style="
+          color: rgb(255, 255, 255);
+          background: rgb(27, 174, 174);
+          border-color: rgb(27, 174, 174);
+        "
+      >
+        <span class="van-button__text">前往首页</span>
+      </button>
     </div>
 
     <!-- submit-bar -->
@@ -65,7 +59,7 @@
       v-show="list.length"
       :price="totalMoney"
       button-text="提交订单"
-      @submit='onsubmit'
+      @submit="onsubmit"
     >
       <van-checkbox v-model="checkAll">全选</van-checkbox>
       <template #tip>
@@ -77,7 +71,7 @@
 
 <script>
 import { Toast } from "vant";
-import { deleteCartList, addGoods, deleteGoods } from "../../api/index";
+import { changeGoods, deleteGoods } from "../../api/index";
 export default {
   name: "Cart",
   mounted() {
@@ -115,31 +109,53 @@ export default {
       this.$store.dispatch("changeCartListAsync");
     },
 
-   
-    // 添加商品数量
-    add(id, count) {
-      console.log(id);
-      addGoods(id, count)
-        .then((data) => {
-          Toast(data.message);
-        })
-        .catch((error) => {
-          Toast(error.message);
-          console.log(error);
-          this.del(id, count);
-        });
+    // 改变商品数量
+    async onChange(e, id) {
+      Toast.loading({ forbidClick: true });
+
+      try {
+        const data = await changeGoods(id, e);
+        console.log(data);
+        if (data) {
+          Toast.clear();
+          this.$store.state.cartList.map((item) => {
+            item.cartItemId = id;
+            // return item * item;
+            console.log();
+          });
+          // console.log(this.$store.state.cartList);
+
+          // 注意此时修改 value 后会再次触发 change 事件
+          this.value = e;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
+    // 添加商品数量
+    // add(id, count) {
+    //   console.log(id);
+    //   addGoods(id, count)
+    //     .then((data) => {
+    //       Toast(data.message);
+    //     })
+    //     .catch((error) => {
+    //       Toast(error.message);
+    //       console.log(error);
+    //       this.del(id, count);
+    //     });
+    // },
 
     // 减少商品数量
-    del(id, count) {
-      deleteGoods(id, count)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    // del(id, count) {
+    //   deleteGoods(id, count)
+    //     .then((data) => {
+    //       console.log(data);
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
   },
   computed: {
     //通过计算属性拿到Vuex state
