@@ -131,31 +131,7 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },
-    // 添加商品数量
-    // add(id, count) {
-    //   console.log(id);
-    //   addGoods(id, count)
-    //     .then((data) => {
-    //       Toast(data.message);
-    //     })
-    //     .catch((error) => {
-    //       Toast(error.message);
-    //       console.log(error);
-    //       this.del(id, count);
-    //     });
-    // },
-
-    // 减少商品数量
-    // del(id, count) {
-    //   deleteGoods(id, count)
-    //     .then((data) => {
-    //       console.log(data);
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
+    }
   },
   computed: {
     //通过计算属性拿到Vuex state
