@@ -110,28 +110,21 @@ export default {
     },
 
     // 改变商品数量
-    async onChange(e, id) {
+    onChange(e, id) {
       Toast.loading({ forbidClick: true });
-
-      try {
-        const data = await changeGoods(id, e);
-        console.log(data);
-        if (data) {
-          Toast.clear();
-          this.$store.state.cartList.map((item) => {
-            item.cartItemId = id;
-            // return item * item;
-            console.log();
-          });
-          // console.log(this.$store.state.cartList);
-
-          // 注意此时修改 value 后会再次触发 change 事件
-          this.value = e;
+      changeGoods(id, e).then(
+        (data) => {
+          if (data.resultCode === 200) {
+            Toast.clear();
+            //重新获取购物车
+            this.$store.dispatch("changeCartListAsync");
+          }
+        },
+        (error) => {
+          Toast.fail("商品上限！");
         }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+      );
+    },
   },
   computed: {
     //通过计算属性拿到Vuex state
