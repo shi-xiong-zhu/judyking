@@ -163,7 +163,7 @@ const router = new VueRouter({
 // })
 
 router.afterEach((to, from) => {
-    document.title = to.meta.til || "新蜂商城"
+    document.title = to.meta.til || "爽提"
 })
 
 export default router
